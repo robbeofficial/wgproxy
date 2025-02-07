@@ -5,11 +5,11 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-WIRESHARK_PRIVATE_KEY = os.getenv('WIRESHARK_PRIVATE_KEY')
+SURFSHARK_PRIVATE_KEY = os.getenv('SURFSHARK_PRIVATE_KEY')
 
-# fetch wireshark configs (if WIRESHARK_PRIVATE_KEY is set)
-if WIRESHARK_PRIVATE_KEY:
-    print("Fetching Wireshark configs ...")
+# fetch surfshark configs (if SURFSHARK_PRIVATE_KEY is set)
+if SURFSHARK_PRIVATE_KEY:
+    print("Fetching Surfshark configs ...")
     target_dir = "/etc/wireguard/"
 
     clusters_endpoint = "https://api.surfshark.com/v4/server/clusters/generic"
@@ -31,4 +31,4 @@ if WIRESHARK_PRIVATE_KEY:
     for cluster in clusters:
         fname = cluster["connectionName"].split('.')[0] + ".conf"
         with open(target_dir + "/" + fname, 'w') as fp:
-            fp.write(config_template.format(**cluster, privKey=WIRESHARK_PRIVATE_KEY))
+            fp.write(config_template.format(**cluster, privKey=SURFSHARK_PRIVATE_KEY))
