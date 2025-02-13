@@ -12,7 +12,7 @@ if SURFSHARK_PRIVATE_KEY:
     clusters_endpoint = "https://api.surfshark.com/v4/server/clusters/generic"
     
     config_template = """[Interface]
-PrivateKey = {privKey}
+PrivateKey = $SURFSHARK_PRIVATE_KEY
 Address = 10.14.0.2/16
 DNS = 162.252.172.57, 149.154.159.92
 PostUp = ip route add $HOST_NETWORK via $DEFAULT_GATEWAY dev $DEFAULT_INTERFACE
@@ -28,6 +28,6 @@ Endpoint = {connectionName}:51820"""
 
     # write wireguard configs
     for cluster in clusters:
-        fname = cluster["connectionName"].split('.')[0] + ".conf"
+        fname = cluster["connectionName"].split('.')[0] + ".conf.template"
         with open(target_dir + "/" + fname, 'w') as fp:
-            fp.write(config_template.format(**cluster, privKey=SURFSHARK_PRIVATE_KEY))
+            fp.write(config_template.format(**cluster))
