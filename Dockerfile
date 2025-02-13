@@ -1,30 +1,19 @@
 FROM alpine:latest
 
-# Install necessary packages
+COPY *.py .env /
+COPY tinyproxy /etc/tinyproxy/
+COPY wireguard /etc/wireguard/
+
 RUN apk update && apk add --no-cache \
     wireguard-tools \
     iptables \
     tinyproxy \
     python3 \
     py3-pip \
-    curl \
-    bash \
-    gettext \
-    && rm -rf /var/cache/apk/*
+    && rm -rf /var/cache/apk/* \
+    && python3 -m venv /venv \ 
+    && /venv/bin/pip install fastapi uvicorn requests python-dotenv \
+    && export $(grep -v '^#' .env | xargs) \
+    && /venv/bin/python3 fetch_wg_configs.py
 
-# Copy code
-COPY *.py .env /
-
-# Install FastAPI and Uvicorn
-RUN python3 -m venv /venv
-RUN /venv/bin/pip install fastapi uvicorn requests python-dotenv
-
-# Fetch wirguard configs
-RUN /venv/bin/python3 fetch_wg_configs.py
-
-# Copy configuration files
-COPY tinyproxy /etc/tinyproxy/
-COPY wireguard /etc/wireguard/
-
-# Start script
 CMD ["sh", "-c", "tinyproxy & /venv/bin/python3 /api.py"]
